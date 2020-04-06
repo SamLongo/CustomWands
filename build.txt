@@ -1,0 +1,3 @@
+displayName = Custom Wands
+author = TripleFate
+version = 0.1
