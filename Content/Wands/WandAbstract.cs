@@ -8,6 +8,7 @@ using Terraria.ModLoader.IO;
 using CustomWands.Content.SpellComponents;
 using static Terraria.ModLoader.ModContent;
 using System;
+using CustomWands.Content.Projectiles;
 
 namespace CustomWands.Content.Wands
 {
@@ -16,12 +17,17 @@ namespace CustomWands.Content.Wands
         public override bool CloneNewInstances => true;
         
         protected List<SpellComponent> ComponentList;
+        public CustomShot shotobject;
         public int CurrSlot = 0;
 
         //special wand variables
         public int wandsize = 1;
         public int CastsPerUse = 1;
 
+        private bool WandCanApplyNextComponent = true;
+
+        public const int BASEDAMAGEFORMODIFIER = 100; //this exists so that the % bonuses from accessories and whatnot are applied flat bonuses screw up
+        public const float BASEKNOCKBACKFORMODIFIER = 10;
 
         public override void SetStaticDefaults()
         {
@@ -42,6 +48,15 @@ namespace CustomWands.Content.Wands
 
         public override void SetDefaults()
         {
+            //holds the universal defaults for all wands
+            //make sure that in the SetDefaults() for any wand includes base.setdefaults()
+            item.damage = BASEDAMAGEFORMODIFIER;
+            item.knockBack = BASEKNOCKBACKFORMODIFIER;
+            item.autoReuse = true;
+            item.magic = true;
+            item.noMelee = true;
+
+            shotobject = new CustomShot(wandsize);
             ComponentList = new List<SpellComponent>(wandsize);
             for (int i = 0; i < wandsize; i++)
             {
@@ -54,17 +69,16 @@ namespace CustomWands.Content.Wands
             // This method handles preparing the next cast in sequence
             if (player.whoAmI == Main.myPlayer)
             {
-
-                SpellComponent CurrItem = ComponentList[CurrSlot];
-                if (CurrItem is ProjectileComponent)
+                if (ComponentList[CurrSlot] != null)
                 {
-                    item.damage = CurrItem.item.damage;
-                    item.mana = CurrItem.item.mana;
-                    item.knockBack = CurrItem.item.knockBack;
-                    item.UseSound = CurrItem.item.UseSound;
-                    item.shoot = CurrItem.item.shoot;
-                    item.shootSpeed = CurrItem.item.shootSpeed;
-                    return; //once the projectile has been determined its fine to just return and not apply any more modifiers
+                    if (shotobject.ExpectingComponent && WandCanApplyNextComponent)
+                    {
+                        shotobject.ApplyNextComponent(ComponentList[CurrSlot]);
+                        WandCanApplyNextComponent = IncrementSlot();
+                    }
+                } else
+                {
+                    IncrementSlot(); // so that it ignores empty spaces on the wand
                 }
             }
         }
@@ -78,8 +92,11 @@ namespace CustomWands.Content.Wands
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
+            shotobject.Shoot(player, ref position, ref speedX, ref speedY, ref type, ref damage, ref knockBack);
             IncrementSlot();
-            return base.Shoot(player, ref position, ref speedX, ref speedY, ref type, ref damage, ref knockBack);
+            WandCanApplyNextComponent = true; //this should never be neccessary but it should help prevent deadlocks
+            shotobject.Reset(wandsize);
+            return false;
         }
 
 

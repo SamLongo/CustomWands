@@ -16,7 +16,7 @@ namespace CustomWands.Content.UI
     {
         const int UIWIDTH = 570;
         const int UIHEIGHT = 220;
-        public bool visible = true;
+        public bool visible = false;
         public bool WaitingForInsert = true;
 
         WandInvSlotUI WandSlot;
@@ -29,6 +29,7 @@ namespace CustomWands.Content.UI
             DragableUIPanel panel = new DragableUIPanel();
             panel.Width.Set(UIWIDTH, 0);
             panel.Height.Set(UIHEIGHT, 0);
+            panel.HAlign = 0.5f;
 
 
             WandSlot = new WandInvSlotUI();
@@ -58,6 +59,16 @@ namespace CustomWands.Content.UI
 
             Append(panel);
             WaitingForInsert = true;
+        }
+
+        public void UnloadUI()
+        {
+            WandSlot = null;
+            foreach (SpellComponentInvSlotUI slot in SpellElementSlots)
+            {
+                slot.UnloadUI();
+            }
+            SpellElementSlots = null;
         }
 
 
@@ -113,7 +124,7 @@ namespace CustomWands.Content.UI
                     }
                     else
                     {
-                        CurrWand.ReplaceComponentAt(i, new SpellComponent());
+                        CurrWand.ReplaceComponentAt(i, null);
                     }
 
                 }

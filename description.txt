@@ -1,1 +1,2 @@
-Custom Wands is a pretty cool mod, it does...this. Modify this file with a description of your mod.
+Custom Wands is a mod that adds customizable wands built by slotting in various components and modifiers.
+allows for a huge number of user created spells to spice up gameplay.

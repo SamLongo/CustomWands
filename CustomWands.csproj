@@ -12,10 +12,10 @@
     <None Remove="Content\Wands\WandAbstract.cs~RF4c5a0d1.TMP" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\SpellComponents\ModifierItems\" />
+    <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Runtime" Version="4.3.1" />
+    <Folder Include="Content\GFX\Dusts\" />
   </ItemGroup>
   <Target Name="BuildMod" AfterTargets="Build">
     <Exec Command="&quot;$(tMLBuildServerPath)&quot; -build $(ProjectDir) -eac $(TargetPath) -define $(DefineConstants) -unsafe $(AllowUnsafeBlocks)" />

@@ -44,7 +44,15 @@ namespace CustomWands.Content.UI
 			return true;
 		}
 
-		private void InvSlotOnClick(UIMouseEvent evt, UIElement e)
+		public void UnloadUI()
+		{
+			HintTexture = null;
+			item = null;
+			HintText = null;
+			HintOnHover = null;
+		}
+
+			private void InvSlotOnClick(UIMouseEvent evt, UIElement e)
 		{
 
 			// Slot has an item

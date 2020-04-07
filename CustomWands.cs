@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using CustomWands.Content.Wands;
 using Terraria.GameInput;
+using CustomWands.Content.GFX;
 
 namespace CustomWands
 {
@@ -28,6 +29,7 @@ namespace CustomWands
                 MyUIstate = new WandEditorUI();
                 MyUIstate.Activate();
                 MyInterface.SetState(MyUIstate);
+                GFX.LoadGfx();
             }
         }
 
@@ -51,7 +53,7 @@ namespace CustomWands
             if (mouseTextIndex != -1)
             {
                 layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer(
-                    "ExampleMod: Coins Per Minute",
+                    "CustomWands: Wand Editor",
                     delegate {
                         if (MyUIstate.visible)
                         {
@@ -64,21 +66,12 @@ namespace CustomWands
             }
         }
 
-        private bool DrawSomethingUI()
-        {
-            // it will only draw if the player is not on the main menu
-            if (!Main.gameMenu
-                && MyUIstate.visible)
-            {
-                MyInterface.Draw(Main.spriteBatch, new GameTime());
-            }
-            return true;
-        }
-
         public override void Unload()
         {
             base.Unload();
             MyInterface = null;
+            MyUIstate.UnloadUI();
+            GFX.UnloadGfx();
         }
 
 

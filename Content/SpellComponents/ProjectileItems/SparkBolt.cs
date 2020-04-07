@@ -9,34 +9,42 @@ using System;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace CustomWands.Content.SpellComponents
 {
 
     class SparkBolt : ProjectileComponent
-	{
-		public new const int ComponentID = 1; //component ID is used for saving/loading and every type of component requires a unique ID
-		public override void SetDefaults()
-		{
-			item.damage = 40;
-			item.magic = true;
-			item.mana = 12;
-			item.knockBack = 5;
-			item.value = 10000;
-			item.rare = 2;
-			item.UseSound = SoundID.Item20;
-			item.autoReuse = true;
-			item.shoot = ProjectileType<SparkBoltProjectile>();
-			item.shootSpeed = 16f;
+    {
+        public new const int ComponentID = 1; //component ID is used for saving/loading and every type of component requires a unique ID
 
-			
-		}
 
-		public override void SetStaticDefaults()
-		{
-			Tooltip.SetDefault("The simplest magic bolt");
-			Item.staff[item.type] = true; //this makes the useStyle animate as a staff instead of as a gun
-		}
+        public override void SetDefaults()
+        {
+            item.damage = 40;
+            item.magic = true;
+            item.mana = 12;
+            item.knockBack = 5;
+            item.value = 10000;
+            item.rare = 2;
+            item.UseSound = SoundID.Item20;
+            item.autoReuse = true;
+            projspeed = 16f;
 
-	}
+
+        }
+
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("The simplest magic bolt");
+            Item.staff[item.type] = true; //this makes the useStyle animate as a staff instead of as a gun
+        }
+
+
+        public override void DoDraw(CustomProjectile CurrentProjectile, SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(GFX.GFX.SPARKBOLT, CurrentProjectile.projectile.position - Main.screenPosition, null, Color.White, CurrentProjectile.angle, Vector2.Zero, CurrentProjectile.projectile.scale, SpriteEffects.None, 0f);
+
+        }
+    }
 }

@@ -5,15 +5,38 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria;
 using static Terraria.ModLoader.ModContent;
+using Terraria.ID;
+using CustomWands.Content.Projectiles;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace CustomWands.Content.SpellComponents
 {
-    public class SpellComponent : ModItem
+    public abstract class SpellComponent : ModItem
     {
         public const int ComponentID = 0; //component ID is used for saving/loading and every type of component requires a unique ID
-        public SpellComponent()
+
+        public override bool CloneNewInstances => true;
+
+        public override void SetDefaults()
         {
+            
+            base.SetDefaults();
+            
         }
+
+        public virtual void AddOrSetProjectileDefaults(CustomProjectile CurrentProjectile)
+        {
+            //for setting defaults, all projectiles are magic
+
+            //only ProjectileComponents are allowed to define width, height, 
+            //Both modifiers and Projectile components are allowed to set friendly to false but not to true
+            
+
+            //almost almost all other properties of CustomProjectile should be added or subtracted linearly to facilitate statcking
+
+            CurrentProjectile.projectile.magic = true;
+        }
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("generic component");
@@ -41,6 +64,12 @@ namespace CustomWands.Content.SpellComponents
                 case (BouncingBolt.ComponentID):
                     newitem.SetDefaults(ItemType<BouncingBolt>());
                     return (SpellComponent)newitem.modItem;
+                case (HeavyShot.ComponentID):
+                    newitem.SetDefaults(ItemType<HeavyShot>());
+                    return (SpellComponent)newitem.modItem;
+                case (DoubleCast.ComponentID):
+                    newitem.SetDefaults(ItemType<DoubleCast>());
+                    return (SpellComponent)newitem.modItem;
             }
         }
 
@@ -60,6 +89,43 @@ namespace CustomWands.Content.SpellComponents
                 return 0;
             }
         }
-        
+
+        public abstract void DoPreinitValues(CustomProjectile CurrentProjectile);
+
+        public abstract void DoApplyValues(CustomProjectile CurrentProjectile);
+
+        public virtual void DoAI(CustomProjectile CurrentProjectile)
+        {
+            //by default components have no AI to add
+        }
+
+        public virtual bool DoOnTileCollide(CustomProjectile CurrentProjectile, Vector2 oldVelocity)
+        {
+            //by default components have no effect on colliding with a block (just get deleted)
+            return true;
+        }
+
+        public virtual void DoOnHitNPC(CustomProjectile CurrentProjectile, NPC target, int damage, float knockback, bool crit)
+        {
+            //by default components have no special effect on colliding with an NPC (deal damage and get deleted)
+        }
+
+        public virtual void DoKill(CustomProjectile CurrentProjectile, int timeLeft)
+        {
+            //by default components have no special effect when they are deleted
+        }
+
+        public abstract void DoDraw(CustomProjectile CurrentProjectile, SpriteBatch spriteBatch);
+        //used for stuff like adding the actual projectile or dusts
+        //every projectilecomponent REQUIRED TO override this
+        //modifiercomponents optional
+
+
+        //set of helper functions to apply standard AI pieces to the components
+        protected void ApplyGravity(CustomProjectile CurrentProjectile)
+        {
+            CurrentProjectile.projectile.velocity.Y += 0.2f;
+        }
+
     }
 }
