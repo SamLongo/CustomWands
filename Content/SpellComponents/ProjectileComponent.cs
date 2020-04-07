@@ -18,6 +18,7 @@ namespace CustomWands.Content.SpellComponents
         public int penetrate = 0;
         public int timeLeft = 600;
         public float projspeed = 0;
+        public int bounces = 0;
 
 
         public override void DoApplyValues(CustomProjectile CurrentProjectile)
@@ -28,6 +29,7 @@ namespace CustomWands.Content.SpellComponents
             CurrentProjectile.projectile.penetrate += penetrate;
             CurrentProjectile.projectile.timeLeft += timeLeft;
             CurrentProjectile.projectile.damage += item.damage;
+            CurrentProjectile.bounces += bounces;
 
         }
 
@@ -35,11 +37,8 @@ namespace CustomWands.Content.SpellComponents
         {
             //stuff that needs to be added to the projectile prior to it existing in space
             //only parameters of CustomProjectile no projectile stuff
-            CurrentProjectile.speed += projspeed;
+            CurrentProjectile.speed = projspeed;
         }
-
-
-
 
 
     }

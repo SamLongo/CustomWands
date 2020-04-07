@@ -20,7 +20,7 @@ namespace CustomWands.Content
     //if a component affects the AI it needs to be handled in CustomProjectiles
     public class CustomShot
     {
-        public int RemainingCasts;
+        public int RemainingCasts = 1;
         public bool ReadyToUse; //boolean so that the wand and this knows if this is a functional projectile or not, if not and its out of slots the wand needs to give up and try again next update
         public bool ExpectingComponent;
 
@@ -46,20 +46,39 @@ namespace CustomWands.Content
             //will return true if this cast is expecting another component
             //whether because the cast itself has multiple projectiles or only modifiers have been loaded so far
             //need to take into consideration a cast being attempted to be built with nulls and only modifiers and must resolve that
+            if(projectilelist.Count <= currentProjectileIndex)
+            {
+                projectilelist.Add(new CustomProjectile());
+                //TODO: modifier inheritance
+            }
+
             if (newcomponent is ProjectileComponent)
             {
                 
                 projectilelist[currentProjectileIndex].AddComponent(newcomponent);
                 ReadyToUse = true;
-                ExpectingComponent = false;
+                RemainingCasts--;
+                if(RemainingCasts <= 0)
+                {
+                    ExpectingComponent = false;
+                }
+                else
+                {
+                    ExpectingComponent = true;
+                }
+                currentProjectileIndex++;
+                
             }
-            else if (newcomponent is ModifierComponent)
+            else 
             {
 
+                projectilelist[currentProjectileIndex].AddComponent(newcomponent);
+                newcomponent.ApplyMetaValues(this);
+                ExpectingComponent = true;
             }
 
 
-            return false;
+            return ExpectingComponent;
         }
 
 
@@ -79,8 +98,8 @@ namespace CustomWands.Content
 
                 //edits that projectile to match the projectile in the list
                 CustomProjectile currentproj = (CustomProjectile)projectile.modProjectile;
-                
                 currentproj.cloneTarget(projectilelist[i]);
+                //initializes and postinitializes to build the stats for the projectile
                 currentproj.initialize();
                 currentproj.postInitialize(damage / WandAbstract.BASEDAMAGEFORMODIFIER, knockBack / WandAbstract.BASEKNOCKBACKFORMODIFIER);
             }
@@ -90,7 +109,7 @@ namespace CustomWands.Content
         private void ClearCurrentcast()
         {
             projectilelist.Clear();
-            projectilelist.Add(new CustomProjectile());
+            currentProjectileIndex = 0;
             ExpectingComponent = true;
         }
 

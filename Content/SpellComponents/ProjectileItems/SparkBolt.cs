@@ -4,11 +4,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 using CustomWands.Content.Projectiles;
-using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace CustomWands.Content.SpellComponents
@@ -30,6 +25,7 @@ namespace CustomWands.Content.SpellComponents
             item.UseSound = SoundID.Item20;
             item.autoReuse = true;
             projspeed = 16f;
+            timeLeft = 300;
 
 
         }

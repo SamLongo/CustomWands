@@ -36,5 +36,18 @@ namespace CustomWands.Content.SpellComponents
             //no defaults like projectiles have
         }
 
+        public override void ApplyMetaValues(CustomShot currentShot)
+        {
+            //for meta stuff like double cast or reducing the accuracy or anything else that effects the spellcast itself
+            //only for modifiercomponents
+            currentShot.RemainingCasts += ExtraCasts;
+        }
+
+        public override void DoPostInitValues(CustomProjectile CurrentProjectile)
+        {
+            CurrentProjectile.DamageModifierFraction += ExtraPercentageDamage;
+            CurrentProjectile.SpeedModifierFraction += ExtraSpeedPercentage;
+        }
+
     }
 }

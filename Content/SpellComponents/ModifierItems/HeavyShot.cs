@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CustomWands.Content.Projectiles;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,12 +14,17 @@ namespace CustomWands.Content.SpellComponents
         public override void SetDefaults()
         {
             ExtraPercentageDamage = 0.5f;
-            ExtraSpeedPercentage = -0.5f;
+            ExtraSpeedPercentage = -2f;
         }
 
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Increases damage but greatly reduces projectile speed");
+        }
+
+        public override void DoAI(CustomProjectile CurrentProjectile)
+        {
+            CurrentProjectile.projectile.velocity = CurrentProjectile.projectile.velocity * 0.99f;
         }
     }
 }

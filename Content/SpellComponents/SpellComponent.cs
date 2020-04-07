@@ -24,19 +24,6 @@ namespace CustomWands.Content.SpellComponents
             
         }
 
-        public virtual void AddOrSetProjectileDefaults(CustomProjectile CurrentProjectile)
-        {
-            //for setting defaults, all projectiles are magic
-
-            //only ProjectileComponents are allowed to define width, height, 
-            //Both modifiers and Projectile components are allowed to set friendly to false but not to true
-            
-
-            //almost almost all other properties of CustomProjectile should be added or subtracted linearly to facilitate statcking
-
-            CurrentProjectile.projectile.magic = true;
-        }
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("generic component");
@@ -90,6 +77,8 @@ namespace CustomWands.Content.SpellComponents
             }
         }
 
+        public virtual void ApplyMetaValues(CustomShot currentShot) { }
+
         public abstract void DoPreinitValues(CustomProjectile CurrentProjectile);
 
         public abstract void DoApplyValues(CustomProjectile CurrentProjectile);
@@ -119,6 +108,11 @@ namespace CustomWands.Content.SpellComponents
         //used for stuff like adding the actual projectile or dusts
         //every projectilecomponent REQUIRED TO override this
         //modifiercomponents optional
+
+        public virtual void DoPostInitValues(CustomProjectile customProjectile)
+        {
+            //do nothing
+        }
 
 
         //set of helper functions to apply standard AI pieces to the components

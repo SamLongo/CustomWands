@@ -22,14 +22,24 @@ namespace CustomWands.Content.Projectiles
         //flat bonuses and modifiers are added up during the initialize phase (damage hidden in projectile.damage)
         public float speed = 0;
         public float angle = 0;
+        public int bounces = 0;
         //this is only important in the case of antigravity/reverse gravity component wanting to turn this off despite a projectile normally having graviy
+        //don't exactly want to just add it multiple times cause then no gravity could become inverted gravity
         public bool hasgravity = true;
+
 
         //fractional bonuses are added up during the initialize phase and then applied at the postinitialize phase
         //basically multiple multiplicative bonuses stack together additively ie +50% twice is just +100% intead of +125%
-        //if these sum up to negative that should be treated as a malus and flipped to some value between 0 and 1 depending on how negative it was ie -2f is 0.25f since its -200% or 1/4
+        //sum up in a way that 0 is baseline for 100% damage and speed -1f is -100% or halved and 1f is +100f is +100% or doubled
         public float DamageModifierFraction = 0f;
         public float SpeedModifierFraction = 0f;
+
+
+        public override void SetDefaults()
+        {
+            projectile.timeLeft = 0;
+            base.SetDefaults();
+        }
 
         public override void AI()
         {
@@ -48,7 +58,9 @@ namespace CustomWands.Content.Projectiles
             {
                 component.DoPreinitValues(this);
             }
-        }
+            DamageModifierFraction = 0f;
+            SpeedModifierFraction = 0f;
+    }
 
         public void initialize()
         {
@@ -61,9 +73,38 @@ namespace CustomWands.Content.Projectiles
         public void postInitialize(float damagemodifier, float knockbackmodifier)
         {
             //for % based modifications run after all the numbers have been put in
-            projectile.damage = (int)(projectile.damage * damagemodifier);
+            //damage modifier come in as 1f being the baseline so they need to be changed to fit the scheme
+
+            foreach (SpellComponent component in componentlist)
+            {
+                component.DoPostInitValues(this);
+            } 
+
+            damagemodifier -= 1f;
+
+            DamageModifierFraction += damagemodifier;
+            if(DamageModifierFraction < 0)
+            {
+                DamageModifierFraction = 1f/(-(DamageModifierFraction-1));
+            } else
+            {
+                DamageModifierFraction += 1f;
+            }
+
+            if (SpeedModifierFraction < 0)
+            {
+                SpeedModifierFraction = 1f / (-(SpeedModifierFraction - 1));
+            }
+            else
+            {
+                SpeedModifierFraction += 1f;
+            }
+
+            projectile.damage = (int)(projectile.damage * DamageModifierFraction);
             projectile.knockBack *= knockbackmodifier;
+            projectile.velocity = new Vector2(projectile.velocity.X * SpeedModifierFraction, projectile.velocity.Y * SpeedModifierFraction);
         }
+
 
         public void AddComponent(SpellComponent component)
         {

@@ -24,19 +24,10 @@ namespace CustomWands.Content.SpellComponents
 			item.rare = 2;
 			width = 16;
 			height = 16;
-			penetrate = 3;
+			penetrate = 0;
 			projspeed = 28f;
+			bounces = 3;
 		}
-
-		public override void AddOrSetProjectileDefaults(CustomProjectile CurrentProjectile)
-		{
-			base.AddOrSetProjectileDefaults(CurrentProjectile);
-			CurrentProjectile.projectile.width = 4;
-			CurrentProjectile.projectile.height = 4;
-			CurrentProjectile.projectile.penetrate = 3;
-			CurrentProjectile.projectile.timeLeft += 600;
-		}
-
 		public override void SetStaticDefaults()
 		{
 			Tooltip.SetDefault("A weak bouncing blast with high speed");
@@ -55,14 +46,13 @@ namespace CustomWands.Content.SpellComponents
 
 		public override bool DoOnTileCollide(CustomProjectile CurrentProjectile, Vector2 oldVelocity)
 		{
-			CurrentProjectile.projectile.penetrate--;
-			if (CurrentProjectile.projectile.penetrate <= 0)
+			CurrentProjectile.bounces--;
+			if (CurrentProjectile.bounces <= 0)
 			{
 				return true;
 			}
 			else
 			{
-				CurrentProjectile.projectile.ai[0] += 0.1f;
 				if (CurrentProjectile.projectile.velocity.X != oldVelocity.X)
 				{
 					CurrentProjectile.projectile.velocity.X = -oldVelocity.X;
@@ -84,8 +74,6 @@ namespace CustomWands.Content.SpellComponents
 
 		public override void DoKill(CustomProjectile CurrentProjectile, int timeLeft)
 		{
-			CurrentProjectile.projectile.ai[0] += 0.1f;
-			CurrentProjectile.projectile.velocity *= 0.75f;
 		}
 
 		public override void DoDraw(CustomProjectile CurrentProjectile, SpriteBatch spriteBatch)

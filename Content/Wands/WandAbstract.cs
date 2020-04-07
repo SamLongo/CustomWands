@@ -56,7 +56,7 @@ namespace CustomWands.Content.Wands
             item.magic = true;
             item.noMelee = true;
 
-            shotobject = new CustomShot(wandsize);
+            shotobject = new CustomShot(CastsPerUse);
             ComponentList = new List<SpellComponent>(wandsize);
             for (int i = 0; i < wandsize; i++)
             {
@@ -69,33 +69,37 @@ namespace CustomWands.Content.Wands
             // This method handles preparing the next cast in sequence
             if (player.whoAmI == Main.myPlayer)
             {
-                if (ComponentList[CurrSlot] != null)
+                while (shotobject.ExpectingComponent && WandCanApplyNextComponent)
                 {
-                    if (shotobject.ExpectingComponent && WandCanApplyNextComponent)
+                    if (ComponentList[CurrSlot] != null)
                     {
-                        shotobject.ApplyNextComponent(ComponentList[CurrSlot]);
-                        WandCanApplyNextComponent = IncrementSlot();
+                        if (shotobject.ExpectingComponent && WandCanApplyNextComponent)
+                        {
+                            shotobject.ApplyNextComponent(ComponentList[CurrSlot]);
+                            WandCanApplyNextComponent = IncrementSlot();
+                        }
                     }
-                } else
-                {
-                    IncrementSlot(); // so that it ignores empty spaces on the wand
+                    else
+                    {
+                        WandCanApplyNextComponent = IncrementSlot(); // so that it ignores empty spaces on the wand
+                    }
                 }
             }
         }
 
         private bool IncrementSlot()
         {
-
-            CurrSlot = (CurrSlot + 1) % wandsize;
-            return (CurrSlot == 0 && wandsize > 1);
+            CurrSlot = CurrSlot + 1;
+            bool wrapped = (CurrSlot != wandsize);
+            CurrSlot = CurrSlot % wandsize;
+            return wrapped;
         }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
             shotobject.Shoot(player, ref position, ref speedX, ref speedY, ref type, ref damage, ref knockBack);
-            IncrementSlot();
             WandCanApplyNextComponent = true; //this should never be neccessary but it should help prevent deadlocks
-            shotobject.Reset(wandsize);
+            shotobject.Reset(CastsPerUse);
             return false;
         }
 
