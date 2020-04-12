@@ -12,6 +12,7 @@ namespace CustomWands.Content.SpellComponents
 
         public override void SetDefaults()
         {
+            item.mana = 2;
             ExtraCasts = 1;
         }
 

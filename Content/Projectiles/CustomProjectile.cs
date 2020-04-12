@@ -34,7 +34,11 @@ namespace CustomWands.Content.Projectiles
         public float DamageModifierFraction = 0f;
         public float SpeedModifierFraction = 0f;
 
+        public List<NPC> CantHitNPCS = new List<NPC>(9); //so that it doesnt hit the same NPC over and over every frame for penetrators
 
+
+
+        //TODO: penetrate not functioning as vanilla instead just hitting every frame
         public override void SetDefaults()
         {
             projectile.timeLeft = 0;
@@ -49,6 +53,15 @@ namespace CustomWands.Content.Projectiles
             foreach (SpellComponent component in componentlist)
             {
                 component.DoAI(this);
+            }
+            
+            for(int i = CantHitNPCS.Count-1; i >=0; i--) //iterates backwards since this can delete them from the list and should iterate through all of them
+            {
+                //TODO: if the collision detection is ever changed for any projectile this will need to be modified to satisfy (though good enough for any case I can think of right now)
+                if (!projectile.Colliding(projectile.getRect(), CantHitNPCS[i].getRect()))
+                {
+                    CantHitNPCS.RemoveAt(i);
+                }
             }
         }
 
@@ -66,7 +79,7 @@ namespace CustomWands.Content.Projectiles
         {
             foreach (SpellComponent component in componentlist)
             {
-                component.DoApplyValues(this);
+                component.DoInitValues(this);
             }
         }
 
@@ -138,11 +151,26 @@ namespace CustomWands.Content.Projectiles
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
+        { 
             foreach (SpellComponent component in componentlist)
             {
                 component.DoOnHitNPC(this, target, damage, knockback, crit);
             }
+        }
+
+        public override bool? CanHitNPC(NPC target)
+        {
+            if (CantHitNPCS.Contains(target))
+            {
+                return false;
+            }
+
+            return null;
+        }
+
+        private void CheckColliding(NPC target)
+        {
+            //checks whether the projectile is currently colliding with an NPC, if it is, remove it from the cant hit list since it's done penetrating
         }
 
 
@@ -168,7 +196,6 @@ namespace CustomWands.Content.Projectiles
 
         public void cloneTarget(CustomProjectile tobeCloned)
         {
-            //kind of a horrifying hack that allows the projectile to be created before being loaded into the world and then passed to the projectile in the world using this function
             for (int i = 0; i < tobeCloned.componentlist.Count; i++)
             {
 

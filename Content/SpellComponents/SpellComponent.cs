@@ -8,6 +8,9 @@ using static Terraria.ModLoader.ModContent;
 using Terraria.ID;
 using CustomWands.Content.Projectiles;
 using Microsoft.Xna.Framework.Graphics;
+using System.Reflection;
+using System.Linq;
+using CustomWands;
 
 namespace CustomWands.Content.SpellComponents
 {
@@ -19,9 +22,9 @@ namespace CustomWands.Content.SpellComponents
 
         public override void SetDefaults()
         {
-            
+
             base.SetDefaults();
-            
+
         }
 
         public override void SetStaticDefaults()
@@ -35,16 +38,29 @@ namespace CustomWands.Content.SpellComponents
             //big case switch for every component that is added. neccesary for save/load functionality
             Item newitem = new Item();
 
+            /*
+             * some attempt at adjusting this to be automatic TODO: make it work
+            List<Type> derivedClassList = typeof(SpellComponent).GetTypeInfo().Assembly.GetTypes().Where(type => type.IsInstanceOfType(typeof(SpellComponent))).ToList();
+            foreach (Type element in derivedClassList)
+            {
+                if (ID == int.Parse(element.GetField("ComponentID").GetValue(null).ToString()))
+                {
+                    newitem.SetDefaults(ItemType<>())
+                    return (SpellComponent)newitem.modItem;
+                }
+            }
+            */
+
             switch (ID)
             {
                 default:
                     return null;//either there was no component in that slot and this is correct or something went wrong and it was deleted (most likely missing componentID)
 
-                //the following 2 lines and its repetition is literally the reason for all the excess code in CreateComponentByID and GetComponentID
+                //the following 2 lines and its repetition is literally the reason for all the excess code in CreateComponentByID 
                 //to do a case switch you need a constant reference to a value
                 //to create an actual item instance you need a constant reference to a type
                 //together it means for saving and loading all of this is required
-                //potential TODO: rework the save/load system to not require any of this
+                //potential TODO: rework the save/load system to not require any of this (item list saving?)
                 case (SparkBolt.ComponentID):
                     newitem.SetDefaults(ItemType<SparkBolt>());
                     return (SpellComponent)newitem.modItem;
@@ -57,21 +73,28 @@ namespace CustomWands.Content.SpellComponents
                 case (DoubleCast.ComponentID):
                     newitem.SetDefaults(ItemType<DoubleCast>());
                     return (SpellComponent)newitem.modItem;
+                case (PiercingShot.ComponentID):
+                    newitem.SetDefaults(ItemType<PiercingShot>());
+                    return (SpellComponent)newitem.modItem;
+                case (HomingShot.ComponentID):
+                    newitem.SetDefaults(ItemType<HomingShot>());
+                    return (SpellComponent)newitem.modItem;
             }
         }
 
-        
+
         public static int GetComponentID(SpellComponent component)
         {
             //use this to get the ID since they are consts and aren't accessed normally as class members
-            if(component != null)
+            if (component != null)
             {
                 //How I think this line works
                 //some kind of inspection on the type of the component being passed in to find the constant field "componentID"
                 //it then gets the value as an object and converts it to a string before finally parsing it into an int
                 //basically magic to prevent the need for another big case switch statement
                 return int.Parse(component.GetType().GetField("ComponentID").GetValue(null).ToString());
-            } else
+            }
+            else
             {
                 return 0;
             }
@@ -81,7 +104,7 @@ namespace CustomWands.Content.SpellComponents
 
         public abstract void DoPreinitValues(CustomProjectile CurrentProjectile);
 
-        public abstract void DoApplyValues(CustomProjectile CurrentProjectile);
+        public abstract void DoInitValues(CustomProjectile CurrentProjectile);
 
         public virtual void DoAI(CustomProjectile CurrentProjectile)
         {
@@ -120,6 +143,5 @@ namespace CustomWands.Content.SpellComponents
         {
             CurrentProjectile.projectile.velocity.Y += 0.2f;
         }
-
     }
 }

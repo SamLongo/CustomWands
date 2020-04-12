@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Terraria.ModLoader;
 
 namespace CustomWands.Content.SpellComponents
 {
@@ -19,6 +20,7 @@ namespace CustomWands.Content.SpellComponents
         public int ExtraFlatDamage = 0;
         public float ExtraPercentageDamage = 0f;
         public float ExtraSpeedPercentage = 0f;
+        public int penetrate = 0;
 
         public override void DoDraw(CustomProjectile CurrentProjectile, SpriteBatch spriteBatch)
         {
@@ -26,9 +28,10 @@ namespace CustomWands.Content.SpellComponents
             //but they can if they add dusts or light or something
         }
 
-        public override void DoApplyValues(CustomProjectile CurrentProjectile)
+        public override void DoInitValues(CustomProjectile CurrentProjectile)
         {
-            //no defaults like the projectile components have
+            CurrentProjectile.projectile.penetrate += penetrate;
+            CurrentProjectile.projectile.damage += ExtraFlatDamage;
         }
 
         public override void DoPreinitValues(CustomProjectile CurrentProjectile)
@@ -47,6 +50,15 @@ namespace CustomWands.Content.SpellComponents
         {
             CurrentProjectile.DamageModifierFraction += ExtraPercentageDamage;
             CurrentProjectile.SpeedModifierFraction += ExtraSpeedPercentage;
+        }
+
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+
+            TooltipLine line = new TooltipLine(mod, "IsModifier", "Modifier");
+            line.overrideColor = Color.CornflowerBlue;
+            tooltips.Add(line);
         }
 
     }

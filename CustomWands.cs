@@ -24,7 +24,7 @@ namespace CustomWands
             // the server can't see UI, can it? it's just a command prompt
             if (!Main.dedServ)
             {
-                EditWandHotKey = RegisterHotKey("Open Wand Interface", "y");
+                EditWandHotKey = RegisterHotKey("Open Wand Interface", "Y");
                 MyInterface = new UserInterface();
                 MyUIstate = new WandEditorUI();
                 MyUIstate.Activate();

@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 using CustomWands.Content.Projectiles;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace CustomWands.Content.SpellComponents
 {
@@ -18,7 +19,7 @@ namespace CustomWands.Content.SpellComponents
         {
             item.damage = 40;
             item.magic = true;
-            item.mana = 12;
+            item.mana = 6;
             item.knockBack = 5;
             item.value = 10000;
             item.rare = 2;
@@ -26,6 +27,8 @@ namespace CustomWands.Content.SpellComponents
             item.autoReuse = true;
             projspeed = 16f;
             timeLeft = 300;
+            width = 8;
+            height = 8;
 
 
         }
@@ -33,13 +36,12 @@ namespace CustomWands.Content.SpellComponents
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("The simplest magic bolt");
-            Item.staff[item.type] = true; //this makes the useStyle animate as a staff instead of as a gun
         }
 
 
         public override void DoDraw(CustomProjectile CurrentProjectile, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(GFX.GFX.SPARKBOLT, CurrentProjectile.projectile.position - Main.screenPosition, null, Color.White, CurrentProjectile.angle, Vector2.Zero, CurrentProjectile.projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(GFX.GFX.SPARKBOLT, CurrentProjectile.projectile.position - Main.screenPosition - new Vector2((float)(12*Math.Cos(CurrentProjectile.angle)), (float)(12 * Math.Sin(CurrentProjectile.angle))) , null, Color.White, CurrentProjectile.angle, Vector2.Zero, CurrentProjectile.projectile.scale, SpriteEffects.None, 0f);
 
         }
     }

@@ -18,7 +18,7 @@ namespace CustomWands.Content.SpellComponents
 		{
 			item.damage = 20;
 			item.magic = true;
-			item.mana = 12;
+			item.mana = 6;
 			item.knockBack = 5;
 			item.value = 10000;
 			item.rare = 2;
@@ -26,12 +26,11 @@ namespace CustomWands.Content.SpellComponents
 			height = 16;
 			penetrate = 0;
 			projspeed = 28f;
-			bounces = 3;
+			bounces = 4;
 		}
 		public override void SetStaticDefaults()
 		{
 			Tooltip.SetDefault("A weak bouncing blast with high speed");
-			Item.staff[item.type] = true; //this makes the useStyle animate as a staff instead of as a gun
 		}
 
 		
@@ -80,7 +79,7 @@ namespace CustomWands.Content.SpellComponents
 		{
 		//	spriteBatch.Draw(GFX.GFX.BOUNCINGBOLT, CurrentProjectile.projectile.position, CurrentProjectile.projectile.getRect(), Color.White, CurrentProjectile.angle, Vector2.Zero, CurrentProjectile.projectile.scale, SpriteEffects.None, 0f);
 
-			spriteBatch.Draw(GFX.GFX.BOUNCINGBOLT, CurrentProjectile.projectile.position - Main.screenPosition, null, Color.White, 0f, Vector2.Zero, CurrentProjectile.projectile.scale, SpriteEffects.None, 0f);
+			spriteBatch.Draw(GFX.GFX.BOUNCINGBOLT, CurrentProjectile.projectile.position - Main.screenPosition - new Vector2(2,2), null, Color.White, 0f, Vector2.Zero, CurrentProjectile.projectile.scale, SpriteEffects.None, 0f);
 		}
 	}
 }

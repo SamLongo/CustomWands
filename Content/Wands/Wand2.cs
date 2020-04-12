@@ -4,6 +4,7 @@ using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 using CustomWands.Content.SpellComponents;
+using Microsoft.Xna.Framework;
 
 namespace CustomWands.Content.Wands
 {
@@ -15,14 +16,15 @@ namespace CustomWands.Content.Wands
 
 			item.width = 40;
 			item.height = 20;
-			item.useTime = 10;
-			item.useAnimation = 20;
-			item.useStyle = 5;
+			item.useTime = 15;
+            item.useAnimation = item.useTime;
+            item.useStyle = 5;
 			item.value = 10000;
 			item.rare = 2;
 			item.UseSound = SoundID.Item11;
 			item.shoot = 10;
-			item.shootSpeed = 16f;
+            item.shootSpeed = 16f;
+            Spread = MathHelper.ToRadians(25);
 			
 			wandsize = 8;
             base.SetDefaults();
@@ -32,7 +34,7 @@ namespace CustomWands.Content.Wands
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Weak wand");
-            Tooltip.SetDefault("eight slot wand");
+            Tooltip.SetDefault("Use the Wand Editor UI to put components in (Default Hotkey: Y)");
 
 
         }
