@@ -25,6 +25,9 @@ namespace CustomWands.Content
         public bool ExpectingComponent;
 
         private List<CustomProjectile> projectilelist = new List<CustomProjectile>(30);
+        private List<SpellComponent> ModifierInheritance = new List<SpellComponent>(20); //contains ONLY MODIFIERS that apply to the whole cast
+            //basically every modifier to the left of a projectile gets added to the projectile
+            //meta wand effects (ie doublecast) are only applied once since they only apply the first time they are added in ApplyNextComponent
         int currentProjectileIndex = 0;
 
         private int CurrentManaCost = 0; //private because I think later this may need to be altered and I'd rather keep it as a Get function
@@ -40,7 +43,10 @@ namespace CustomWands.Content
         public void Reset(int StartingCasts, double StartingSpread)
         {
             ReadyToUse = false;
-            ClearCurrentcast();
+            projectilelist.Clear();
+            currentProjectileIndex = 0;
+            ModifierInheritance.Clear();
+            ExpectingComponent = true;
             spreadangle = StartingSpread;
             RemainingCasts = StartingCasts;
             CurrentManaCost = 0;
@@ -71,12 +77,15 @@ namespace CustomWands.Content
                 if (projectilelist.Count <= currentProjectileIndex)
                 {
                     projectilelist.Add(new CustomProjectile());
-                    //TODO: modifier inheritance
+                    for(int i = 0; i < ModifierInheritance.Count(); i++)
+                    {
+                        projectilelist[currentProjectileIndex].AddComponent(ModifierInheritance[i]);
+                    }
                 }
 
                 if (newcomponent is ProjectileComponent)
                 {
-
+                    //TODO: trigger projectiles that want the next cast to be formed inside of the customprojectile to be created when the old projectile dies
                     projectilelist[currentProjectileIndex].AddComponent(newcomponent);
                     ReadyToUse = true;
                     RemainingCasts--;
@@ -95,6 +104,7 @@ namespace CustomWands.Content
                 {
 
                     projectilelist[currentProjectileIndex].AddComponent(newcomponent);
+                    ModifierInheritance.Add(newcomponent);
                     newcomponent.ApplyMetaValues(this);
                     ExpectingComponent = true;
                 }
@@ -141,16 +151,5 @@ namespace CustomWands.Content
                 }
             }
         }
-
-
-        private void ClearCurrentcast()
-        {
-            projectilelist.Clear();
-            currentProjectileIndex = 0;
-            ExpectingComponent = true;
-        }
-
-
-
     }
 }

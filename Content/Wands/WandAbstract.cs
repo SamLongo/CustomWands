@@ -141,7 +141,6 @@ namespace CustomWands.Content.Wands
         {
             List<int> intlist = tag.Get<List<int>>(nameof(ComponentList));
             ConvertToComponents(intlist);
-
         }
 
         // NetSend and NetRecieve allow the components to be saved when the item is taken out of the inventory in multiplayer
